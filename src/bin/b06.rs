@@ -51,5 +51,5 @@ pub fn main() {
         println!("NO")
     }
 
-    println!()
+    println!("{:?}", total)
 }
