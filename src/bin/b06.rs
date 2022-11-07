@@ -50,6 +50,4 @@ pub fn main() {
     } else {
         println!("NO")
     }
-
-    println!("{:?}", total)
 }
