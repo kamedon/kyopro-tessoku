@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "atcoder-90"
+name = "kyopro-tessoku"
 version = "0.1.0"
 dependencies = [
  "proconio",
