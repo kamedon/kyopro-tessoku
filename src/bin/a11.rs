@@ -1,56 +1,38 @@
 use proconio::input;
 
 pub fn main() {
-    input! { N: usize, A: [usize;N] }
-    run(&Args { w: W, h: H, snows: S })
+    input! { N: usize,  X: i32, L: [i32;N] }
+    run(&Args { x: X, list: L })
 }
 
 #[derive(Debug)]
 struct Args {
-    h: usize,
-    w: usize,
-    snows: Vec<Vec<usize>>,
+    x: i32,
+    list: Vec<i32>,
 }
 
 fn run(args: &Args) {
-    println!("{:?}", args);
+    println!("{:?}", args.list);
+    let index = compare(args.x, &args.list, 0);
+    println!("{}", index + 1)
+}
 
-    let mut map: Vec<Vec<i32>> = vec![vec![0; args.w + 1]; args.h + 1];
-    let mut sumMap: Vec<Vec<i32>> = map.clone();
-
-    for snow in args.snows.iter() {
-        let a = snow[0];
-        let b = snow[1];
-        let c = snow[2];
-        let d = snow[3];
-
-        map[a][b] += 1;
-        map[c + 1][b] -= 1;
-        map[a][d + 1] -= 1;
-        map[c + 1][d + 1] += 1;
+fn compare(x: i32, list: &[i32], index: usize) -> usize {
+    // 11 / 2 = 5
+    // 5, 6
+    let count = list.len();
+    if count == 1 {
+        return index;
     }
-
-    for row in 0..args.h + 1 {
-        for col in 0..args.w + 1 {
-            if col == 0 {
-                sumMap[row][col] = map[row][col]
-            } else {
-                sumMap[row][col] = sumMap[row][col - 1] + map[row][col]
-            }
-        }
-    }
-
-    for row in 0..args.h + 1 {
-        for col in 0..args.w + 1 {
-            if row == 0 {
-                sumMap[row][col] = map[row][col]
-            } else {
-                sumMap[row][col] = sumMap[row - 1][col] + sumMap[row][col]
-            }
-        }
-    }
-
-    println!("{:?}", sumMap)
+    let half_index = count / 2;
+    return if x < list[half_index] {
+        println!("{}: {:?}", index, &list[..half_index]);
+        compare(x, &list[..half_index], index)
+        //
+    } else {
+        println!("{}: {:?}", index + half_index, &list[half_index..]);
+        compare(x, &list[half_index..], index + half_index)
+    };
 }
 
 
@@ -61,9 +43,13 @@ mod tests {
     #[test]
     fn test() {
         run(&Args {
-            w: 5,
-            h: 5,
-            snows: vec![vec![1, 1, 3, 3], vec![2, 2, 4, 4]],
+            x: 47,
+            list: vec![11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67],
+        });
+
+        run(&Args {
+            x: 80,
+            list: vec![10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
         });
     }
 }
