@@ -1,58 +1,45 @@
+use std::process::id;
+use std::ptr::null;
+
 use proconio::input;
 
 pub fn main() {
-    input! { N: usize, A: [usize;N] }
-    run(&Args { w: W, h: H, snows: S })
+    input! { N: usize,  K: u32, A: [u32;N] }
+    run(&Args { k: K, list: A })
 }
 
 #[derive(Debug)]
 struct Args {
-    h: usize,
-    w: usize,
-    snows: Vec<Vec<usize>>,
+    k: u32,
+    list: Vec<u32>,
 }
 
 fn run(args: &Args) {
-    println!("{:?}", args);
-
-    let mut map: Vec<Vec<i32>> = vec![vec![0; args.w + 1]; args.h + 1];
-    let mut sumMap: Vec<Vec<i32>> = map.clone();
-
-    for snow in args.snows.iter() {
-        let a = snow[0];
-        let b = snow[1];
-        let c = snow[2];
-        let d = snow[3];
-
-        map[a][b] += 1;
-        map[c + 1][b] -= 1;
-        map[a][d + 1] -= 1;
-        map[c + 1][d + 1] += 1;
-    }
-
-    for row in 0..args.h + 1 {
-        for col in 0..args.w + 1 {
-            if col == 0 {
-                sumMap[row][col] = map[row][col]
-            } else {
-                sumMap[row][col] = sumMap[row][col - 1] + map[row][col]
-            }
-        }
-    }
-
-    for row in 0..args.h + 1 {
-        for col in 0..args.w + 1 {
-            if row == 0 {
-                sumMap[row][col] = map[row][col]
-            } else {
-                sumMap[row][col] = sumMap[row - 1][col] + sumMap[row][col]
-            }
-        }
-    }
-
-    println!("{:?}", sumMap)
+    let N: u32 = 100_000;
+    let result = calc(args.k, &args.list, N / 2, Some(N));
+    println!("{}", result)
 }
 
+fn calc(k: u32, vec: &[u32], current_time: u32, done_time: Option<u32>) -> u32 {
+    println!("{}: {:?}", current_time, done_time);
+    if done_time == Some(current_time) {
+        return current_time;
+    }
+    let sum = vec.iter().fold(0, |sum, v| sum + (current_time / *v));
+    return if k <= sum {
+        let next = current_time / 2;
+        calc(k, vec, next, Some(current_time))
+    } else {
+        let next = match done_time {
+            None => { current_time + (current_time / 2) }
+            Some(v) => {
+                let s = (v - current_time);
+                current_time + (s / 2) + (s % 2)
+            }
+        };
+        calc(k, vec, next, done_time)
+    };
+}
 
 #[cfg(test)]
 mod tests {
@@ -61,9 +48,8 @@ mod tests {
     #[test]
     fn test() {
         run(&Args {
-            w: 5,
-            h: 5,
-            snows: vec![vec![1, 1, 3, 3], vec![2, 2, 4, 4]],
+            k: 10,
+            list: vec![1, 2, 3, 4],
         });
     }
 }
