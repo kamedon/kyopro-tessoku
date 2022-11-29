@@ -18,22 +18,22 @@ struct Args {
 }
 
 fn run(args: &Args) {
-    let abSum = sum(&args.a_box, &args.b_box);
-    let cdSum = sum(&args.c_box, &args.d_box);
-    let count = abSum.len();
+    let ab_sum = sum(&args.a_box, &args.b_box);
+    let cd_sum = sum(&args.c_box, &args.d_box);
+    let count = ab_sum.len();
     let k: i32 = args.k as i32;
-    println!("{:?}", abSum);
-    println!("{:?}", cdSum);
+    println!("{:?}", ab_sum);
+    println!("{:?}", cd_sum);
 
     for i in 0..count {
-        let v: i32 = (abSum[i] as i32) - k;
+        let v: i32 = (ab_sum[i] as i32) - k;
         if v <= 0 {
             continue;
         }
         let v = v as u32;
         println!("{:?}", v);
 
-        let hit = cdSum.iter().find(|cdV| v == **cdV);
+        let hit = cd_sum.iter().find(|cdV| v == **cdV);
         match hit {
             None => {}
             Some(_) => {
